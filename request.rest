@@ -1,0 +1,37 @@
+
+###
+
+GET http://localhost:3001/post
+
+###
+GET http://localhost:3001/post?sender=liron
+###
+GET http://localhost:3001/post/622f09afd5fa3a81dc48fa5b
+###
+
+POST http://localhost:3001/post
+Content-Type: application/json
+
+{
+    "message" : "this is my first message",
+    "sender" : "Liron&Ohad"
+}
+
+###
+
+POST http://localhost:3001/auth/register
+Content-Type: application/json
+
+{
+    "email" : "t11@a.com",
+    "password" : "2282222"
+}
+###
+
+POST http://localhost:3001/auth/login
+Content-Type: application/json
+
+{
+    "email" : "t11@a.com",
+    "password" : "2282222"
+}
