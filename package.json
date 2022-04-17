@@ -4,7 +4,7 @@
   "description": "webclass2022",
   "main": "app.js",
   "scripts": {
-    "test": "tsc && jest --detectOpenHandles --forceExit --coverage",
+    "test": "tsc && jest --detectOpenHandles --forceExit --coverage --runInBand",
     "start": "tsc && node dist/app.js",
     "lint": "eslint . --ext .ts",
     "devstart": "nodemon ./src/app.ts"

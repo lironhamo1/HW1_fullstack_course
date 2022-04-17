@@ -5,7 +5,7 @@ import authenticate from "../common/auth_middleware";
 
 router.post("/register", Auth.register);
 router.post("/login", Auth.login);
-router.post("/refresh", Auth.renewToken);
+router.get("/refresh", Auth.renewToken);
 router.get("/test", authenticate, Auth.test);
 
 

@@ -35,6 +35,12 @@ describe("This is Auth API test",()=>{
         .send({"email":email, "password":password})
     
     expect(response.statusCode).toEqual(200)
+
+    accessToken = response.body.access_token
+    refreshToken = response.body.refresh_token
+
+    expect(accessToken).not.toBeNull()
+    expect(refreshToken).not.toBeNull()
     })
 
     test("Test register taken email API", async ()=>{
@@ -64,12 +70,13 @@ describe("This is Auth API test",()=>{
     //wait untill access token is expiered
     await sleep(3000);
     let response = await request(app)
-      .post("/auth/test")
+      .get("/auth/test")
       .set({ authorization: "barer " + accessToken });
     expect(response.statusCode).not.toEqual(200);
-
+    console.log("REFRESH TOKEN  " + refreshToken);
+    
     response = await request(app)
-      .post("/auth/refresh")
+      .get("/auth/refresh")
       .set({ authorization: "barer " + refreshToken });
     expect(response.statusCode).toEqual(200);
 
@@ -79,7 +86,7 @@ describe("This is Auth API test",()=>{
     expect(refreshToken).not.toBeNull();
 
     response = await request(app)
-      .post("/auth/test")
+      .get("/auth/test")
       .set({ authorization: "barer " + accessToken });
     expect(response.statusCode).toEqual(200);
   });
