@@ -25,9 +25,6 @@ const getAllPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         if (sender != null || sender != undefined) {
             posts = yield post_model_1.default.find({ 'sender': sender });
         }
-        else {
-            posts = yield post_model_1.default.find();
-        }
         res.status(200).send(posts);
     }
     catch (err) {
@@ -39,7 +36,7 @@ const getAllPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 const getPostById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('getPostById id=' + req.params.id);
     const id = req.params.id;
-    if (id == null || id == undefined) {
+    if (id == null || id == undefined || id == '') {
         return res.status(400).send({ 'err': 'no id provided' });
     }
     try {
@@ -96,10 +93,44 @@ const deletePostById = (req, res) => __awaiter(void 0, void 0, void 0, function*
         });
     }
 });
+// const updatePostSenderById = async (req:Request, res:Response)=>{
+//     console.log('updatePostById id=' + req.params.id)
+//     const id = req.params.id
+//     const update= req.body.update
+//     if (id == null || id == undefined){
+//         return res.status(400).send({'err':'no id provided'})
+//     }
+//     try{
+//         await Post.updateOne({"_id":id},{$set:{ 'sender':update}})
+//         res.status(200).send()
+//     }catch(err){
+//         res.status(400).send({
+//             'err': err.message
+//         })
+//     }
+// }
+const updatePostMessageById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('updatePostById id=' + req.params.id);
+    const id = req.params.id;
+    const update = req.body.update;
+    if (id == null || id == undefined) {
+        return res.status(400).send({ 'err': 'no id provided' });
+    }
+    try {
+        yield post_model_1.default.updateOne({ "_id": id }, { $set: { 'message': update } });
+        res.status(200).send();
+    }
+    catch (err) {
+        res.status(400).send({
+            'err': err.message
+        });
+    }
+});
 module.exports = {
     getAllPosts,
     createNewPost,
     getPostById,
-    deletePostById
+    deletePostById,
+    updatePostMessageById,
 };
 //# sourceMappingURL=post.js.map

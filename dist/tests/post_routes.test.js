@@ -63,6 +63,18 @@ describe("This is Post API test", () => {
         expect(retSender).toEqual(sender);
         expect(retId).not.toEqual(null);
     }));
+    test("Test Post post no db API", () => __awaiter(void 0, void 0, void 0, function* () {
+        mongoose_1.default.connection.close();
+        const response = yield (0, supertest_1.default)(server_1.default)
+            .post("/post")
+            .set({ authorization: "barer " + accessToken })
+            .send({
+            message: message,
+            sender: sender,
+        });
+        expect(response.statusCode).not.toEqual(200);
+        yield mongoose_1.default.connect(process.env.DATABASE_URL);
+    }));
     test("Test get Post by id API", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).get("/post/" + retId);
         expect(response.statusCode).toEqual(200);
@@ -73,6 +85,14 @@ describe("This is Post API test", () => {
         expect(retSender).toEqual(sender);
         expect(retId2).toEqual(retId);
     }));
+    test("Test get Post by id with bad id", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default).get("/post/" + retId + '1');
+        expect(response.statusCode).not.toEqual(200);
+    }));
+    // test("Test get Post by id with null id", async () => {
+    //   const response = await request(app).get("/post/ ");
+    //   expect(response.statusCode).not.toEqual(200);
+    // });
     test("Test get Post by sender API", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).get("/post?sender=" + sender);
         expect(response.statusCode).toEqual(200);
@@ -83,6 +103,36 @@ describe("This is Post API test", () => {
         expect(retSender).toEqual(sender);
         expect(retId2).toEqual(retId);
     }));
+    test("Test update post message by id API", () => __awaiter(void 0, void 0, void 0, function* () {
+        const newMsg = 'new message';
+        let response = yield (0, supertest_1.default)(server_1.default)
+            .post("/post/updateMessage/" + retId)
+            .set({ authorization: "barer " + accessToken })
+            .send({ "update": newMsg });
+        expect(response.statusCode).toEqual(200);
+        response = yield (0, supertest_1.default)(server_1.default).get("/post/" + retId);
+        expect(response.statusCode).toEqual(200);
+        const retMessage = response.body.message;
+        const retId2 = response.body._id;
+        expect(retMessage).toEqual(newMsg);
+        expect(retId2).toEqual(retId);
+    }));
+    test("Test update post message by id with bad id API", () => __awaiter(void 0, void 0, void 0, function* () {
+        const newMsg = 'new message';
+        const response = yield (0, supertest_1.default)(server_1.default)
+            .post("/post/updateMessage/" + retId + "1")
+            .set({ authorization: "barer " + accessToken })
+            .send({ "update": newMsg });
+        expect(response.statusCode).not.toEqual(200);
+    }));
+    test("Test update post message by id with null id API", () => __awaiter(void 0, void 0, void 0, function* () {
+        const newMsg = 'new message';
+        const response = yield (0, supertest_1.default)(server_1.default)
+            .post("/post/updateMessage/")
+            .set({ authorization: "barer " + accessToken })
+            .send({ "update": newMsg });
+        expect(response.statusCode).not.toEqual(200);
+    }));
     test("Test delete post by id API", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default)
             .delete("/post/" + retId)
@@ -90,6 +140,18 @@ describe("This is Post API test", () => {
         expect(response.statusCode).toEqual(200);
         const response2 = yield (0, supertest_1.default)(server_1.default).get("/post/" + retId);
         expect(response2.statusCode).toEqual(400);
+    }));
+    test("Test delete post by id when id is bad API", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default)
+            .delete("/post/" + retId + "1")
+            .set({ authorization: "barer " + accessToken });
+        expect(response.statusCode).not.toEqual(200);
+    }));
+    test("Test delete post by id when id is null API", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default)
+            .delete("/post/")
+            .set({ authorization: "barer " + accessToken });
+        expect(response.statusCode).not.toEqual(200);
     }));
 });
 //# sourceMappingURL=post_routes.test.js.map

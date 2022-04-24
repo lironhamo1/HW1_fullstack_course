@@ -29,7 +29,7 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         email == undefined ||
         password == null ||
         password == undefined) {
-        res.status(http_status_codes_1.StatusCodes.BAD_REQUEST);
+        return res.status(http_status_codes_1.StatusCodes.BAD_REQUEST).send({ err: "email or passowrd not provided" });
     }
     //encrypt password
     const salt = yield bcrypt_1.default.genSalt(10);
@@ -147,7 +147,15 @@ const renewToken = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
  * @param {http res} res
  */
 const test = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.status(http_status_codes_1.StatusCodes.OK).send({});
+    try {
+        const user = yield user_model_1.default.findById('6264049d42e3ad69d757be82');
+        user.refreshToken = "sdfasd";
+        yield user.save();
+        res.status(http_status_codes_1.StatusCodes.OK).send({ test: 'adsfasd' });
+    }
+    catch (err) {
+        return res.status(http_status_codes_1.StatusCodes.FORBIDDEN).send({ error: err.message });
+    }
 });
 module.exports = {
     register,

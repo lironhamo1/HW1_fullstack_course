@@ -13,8 +13,6 @@ const getAllPosts = async (req : Request, res: Response) => {
         let posts
         if (sender != null || sender != undefined){
             posts = await Post.find({'sender':sender})
-        }else{
-            posts = await Post.find()
         }
         res.status(200).send(posts)
     }catch(err){
@@ -29,7 +27,7 @@ const getAllPosts = async (req : Request, res: Response) => {
 const getPostById = async (req: Request, res:Response)=>{
     console.log('getPostById id=' + req.params.id)
     const id = req.params.id
-    if (id == null || id == undefined){
+    if (id == null || id == undefined || id == ''){
         return res.status(400).send({'err':'no id provided'})
     }
 
@@ -88,11 +86,47 @@ const deletePostById = async (req:Request, res:Response)=>{
         })
     }
 }
+// const updatePostSenderById = async (req:Request, res:Response)=>{
+//     console.log('updatePostById id=' + req.params.id)
+//     const id = req.params.id
+//     const update= req.body.update
+//     if (id == null || id == undefined){
+//         return res.status(400).send({'err':'no id provided'})
+//     }
+
+//     try{
+//         await Post.updateOne({"_id":id},{$set:{ 'sender':update}})
+//         res.status(200).send()
+//     }catch(err){
+//         res.status(400).send({
+//             'err': err.message
+//         })
+//     }
+// }
+
+const updatePostMessageById = async (req:Request, res:Response)=>{
+    console.log('updatePostById id=' + req.params.id)
+    const id = req.params.id
+    const update= req.body.update
+    if (id == null || id == undefined){
+        return res.status(400).send({'err':'no id provided'})
+    }
+
+    try{
+        await Post.updateOne({"_id":id},{$set:{ 'message':update}})
+        res.status(200).send()
+    }catch(err){
+        res.status(400).send({
+            'err': err.message
+        })
+    }
+}
 export = {
     getAllPosts,
     createNewPost,
     getPostById,
-    deletePostById
+    deletePostById,
+    updatePostMessageById,
 }
 
 

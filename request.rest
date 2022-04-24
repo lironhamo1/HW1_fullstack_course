@@ -14,7 +14,32 @@ Content-Type: application/json
 
 {
     "message" : "this is my first message",
-    "sender" : "Liron&Ohad"
+    "sender" : "Ohad"
+}
+
+###
+POST http://localhost:3001/post/updateSender/6263fba45094e7f66ca56f88
+Content-Type: application/json
+
+{
+    "update" :"Ohad"
+}
+
+
+###
+GET http://localhost:3001/post/getPostBySender
+Content-Type: application/json
+
+{
+    "sender" :"Ohad"
+}
+
+###
+POST http://localhost:3001/post/updateMessage/6263fba45094e7f66ca56f88
+Content-Type: application/json
+
+{
+    "update" :"new message"
 }
 
 ###
@@ -23,7 +48,7 @@ POST http://localhost:3001/auth/register
 Content-Type: application/json
 
 {
-    "email" : "t11@a.com",
+    "email" : "test@test.com",
     "password" : "2282222"
 }
 ###

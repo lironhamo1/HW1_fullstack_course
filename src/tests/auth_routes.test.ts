@@ -44,10 +44,15 @@ describe("This is Auth API test",()=>{
     })
 
     test("Test register taken email API", async ()=>{
-        const response =await request(app).post('/auth/register')
-        .send({"email":email, "password":password})
+      const response =await request(app).post('/auth/register')
+      .send({"email":email, "password":password})
+      expect(response.statusCode).not.toEqual(200)
+    })
     
-    expect(response.statusCode).not.toEqual(200)
+    test("Test register null email and password", async ()=>{
+      const response = await request(app).post('/auth/register')
+      .send({"email":null,"password":null })
+      expect(response.statusCode).not.toEqual(200)
     })
 
     test("Test login wrong email API", async ()=>{
@@ -64,7 +69,34 @@ describe("This is Auth API test",()=>{
     expect(response.statusCode).not.toEqual(200)
     })
     
+    test("Test login null email and password", async ()=>{
+      const response =await request(app).post('/auth/login')
+      .send()
+  
+    expect(response.statusCode).not.toEqual(200)
+    })
+
+
+
+    test("Test renew token token is null",async ()=>{
+      const response = await request(app)
+      .get("/auth/refresh")
+
+      expect(response.statusCode).not.toEqual(200)
+    })
+
+    test("Test renew token bad token(access insted of refresh token) ",async ()=>{
+      const response = await request(app)
+      .get("/auth/refresh")
+      .set({ authorization: "barer " +accessToken });
+      expect(response.statusCode).not.toEqual(200)
+    })
+
+
+
   const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+
 
   test("test refresh token", async () => {
     //wait untill access token is expiered

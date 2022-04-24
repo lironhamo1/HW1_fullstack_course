@@ -22,7 +22,7 @@ import jwt from "jsonwebtoken";
       password == null ||
       password == undefined
     ) {
-      res.status(StatusCodes.BAD_REQUEST);
+      return res.status(StatusCodes.BAD_REQUEST).send({err:"email or passowrd not provided"});
     }
   
     //encrypt password
@@ -170,8 +170,16 @@ import jwt from "jsonwebtoken";
    * @param {http req} req
    * @param {http res} res
    */
-  const test = async (req: Request, res: Response) => {
-    res.status(StatusCodes.OK).send({});
+   const test = async (req: Request, res: Response) => {
+    try {
+      const user = await User.findById('6264049d42e3ad69d757be82')
+      user.refreshToken = "sdfasd"
+      await user.save()
+      res.status(StatusCodes.OK).send({ test: 'adsfasd' });
+  
+    } catch (err) {
+      return res.status(StatusCodes.FORBIDDEN).send({ error: err.message });
+    }
   };
   
   export = {

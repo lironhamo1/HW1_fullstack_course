@@ -50,6 +50,11 @@ describe("This is Auth API test", () => {
             .send({ "email": email, "password": password });
         expect(response.statusCode).not.toEqual(200);
     }));
+    test("Test register null email and password", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default).post('/auth/register')
+            .send({ "email": null, "password": null });
+        expect(response.statusCode).not.toEqual(200);
+    }));
     test("Test login wrong email API", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).post('/auth/login')
             .send({ "email": wrongEmail, "password": password });
@@ -58,6 +63,22 @@ describe("This is Auth API test", () => {
     test("Test login wrong password API", () => __awaiter(void 0, void 0, void 0, function* () {
         const response = yield (0, supertest_1.default)(server_1.default).post('/auth/login')
             .send({ "email": email, "password": wrongPassword });
+        expect(response.statusCode).not.toEqual(200);
+    }));
+    test("Test login null email and password", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default).post('/auth/login')
+            .send();
+        expect(response.statusCode).not.toEqual(200);
+    }));
+    test("Test renew token token is null", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default)
+            .get("/auth/refresh");
+        expect(response.statusCode).not.toEqual(200);
+    }));
+    test("Test renew token bad token(access insted of refresh token) ", () => __awaiter(void 0, void 0, void 0, function* () {
+        const response = yield (0, supertest_1.default)(server_1.default)
+            .get("/auth/refresh")
+            .set({ authorization: "barer " + accessToken });
         expect(response.statusCode).not.toEqual(200);
     }));
     const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
