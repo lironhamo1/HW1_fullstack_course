@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 import server from "../app"
 import User from "../models/user_model";
 import request from "supertest";
-import { closeSocketServer } from "../socket_server"
-
+import {closeSocketServer} from "../socket_server"
+import Post from "../models/post_model"
 
 type UserInfo = {
     id: string,
@@ -47,6 +47,7 @@ const serverCleanup = async () => {
 afterAll(async () => {
     user1.clientSocket.close()
     user2.clientSocket.close()
+    await Post.deleteMany({ sender: user1.id });
     await User.deleteMany({ email: user1.email });
     await User.deleteMany({ email: user2.email });
     await closeSocketServer()

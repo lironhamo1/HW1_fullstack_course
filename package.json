@@ -7,7 +7,8 @@
     "test": "tsc && jest --detectOpenHandles --forceExit --coverage --runInBand",
     "start": "tsc && node dist/app.js",
     "lint": "eslint . --ext .ts",
-    "devstart": "nodemon ./src/app.ts"
+    "devstart": "nodemon ./src/app.ts",
+    "testio": "tsc && jest ./src/tests/socketio.test.ts --runInBand --detectOpenHandles"
   },
   "author": "liron and ohad",
   "license": "ISC",

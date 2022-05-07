@@ -11,39 +11,46 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updatePostMessageById = exports.deletePostById = exports.createNewPost = exports.getPostById = exports.getAllPosts = void 0;
 const post_model_1 = __importDefault(require("../models/post_model"));
+const socket_server_1 = require("../socket_server");
 /**
  * Gets all the posts
  * @param {http request} req
  * @param {http response} res
  */
 const getAllPosts = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('getAllPosts');
+    console.log("getAllPosts");
     try {
         const sender = req.query.sender;
         let posts;
         if (sender != null || sender != undefined) {
-            posts = yield post_model_1.default.find({ 'sender': sender });
+            posts = yield post_model_1.default.find({ sender: sender });
+        }
+        else {
+            posts = yield post_model_1.default.find();
         }
         res.status(200).send(posts);
     }
     catch (err) {
         res.status(400).send({
-            'err': err.message
+            err: err.message,
         });
     }
 });
+exports.getAllPosts = getAllPosts;
 const getPostById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('getPostById id=' + req.params.id);
+    console.log("getPostById id=" + req.params.id);
     const id = req.params.id;
-    if (id == null || id == undefined || id == '') {
-        return res.status(400).send({ 'err': 'no id provided' });
+    if (id == null || id == undefined) {
+        return res.status(400).send({ err: "no id provided" });
     }
     try {
         const post = yield post_model_1.default.findById(id);
         if (post == null) {
             res.status(400).send({
-                'err': 'post doesnot exists'
+                err: "post doesnot exists",
             });
         }
         else {
@@ -52,47 +59,53 @@ const getPostById = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     }
     catch (err) {
         res.status(400).send({
-            'err': err.message
+            err: err.message,
         });
     }
 });
+exports.getPostById = getPostById;
 /**
  * Create new post
- * @param {http request} req
- * @param {http response} res
+ * @param {Request} req
+ * @param {Response} res
  */
 const createNewPost = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log(req.body);
+    const sender = req.body._id;
     const post = new post_model_1.default({
         message: req.body.message,
-        sender: req.body.sender
+        sender: sender,
     });
     try {
         const newPost = yield post.save();
-        res.status(200).send(newPost);
+        //send notification to all other users
+        (0, socket_server_1.broadcastPostMessage)({ sender: sender, message: req.body.message, _id: post._id });
+        res.status(200).send({ sender: sender, message: req.body.message, _id: post._id });
     }
     catch (err) {
         res.status(400).send({
-            'err': err.message
+            err: err.message,
         });
     }
 });
+exports.createNewPost = createNewPost;
 const deletePostById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('deletePostById id=' + req.params.id);
+    console.log("deletePostById id=" + req.params.id);
     const id = req.params.id;
     if (id == null || id == undefined) {
-        return res.status(400).send({ 'err': 'no id provided' });
+        return res.status(400).send({ err: "no id provided" });
     }
     try {
-        yield post_model_1.default.deleteOne({ "_id": id });
+        yield post_model_1.default.deleteOne({ _id: id });
         res.status(200).send();
     }
     catch (err) {
         res.status(400).send({
-            'err': err.message
+            err: err.message,
         });
     }
 });
+exports.deletePostById = deletePostById;
 // const updatePostSenderById = async (req:Request, res:Response)=>{
 //     console.log('updatePostById id=' + req.params.id)
 //     const id = req.params.id
@@ -126,11 +139,5 @@ const updatePostMessageById = (req, res) => __awaiter(void 0, void 0, void 0, fu
         });
     }
 });
-module.exports = {
-    getAllPosts,
-    createNewPost,
-    getPostById,
-    deletePostById,
-    updatePostMessageById,
-};
+exports.updatePostMessageById = updatePostMessageById;
 //# sourceMappingURL=post.js.map
